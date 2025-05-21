@@ -1,32 +1,32 @@
-# 智绘时光（Intelligent Painting of Time）
+# TimeCanvas
 
-智绘时光是一个以日记为核心，以AI大模型为驱动的智能日记管理系统。本项目深度集成主流大模型，提供一句话生成日记、自动分析生成报告、智能待办生成等功能，帮助用户轻松记录和管理生活点滴。
+TimeCanvas is an intelligent diary management system powered by AI. This project deeply integrates with mainstream large language models to provide features like one-sentence diary generation, automatic analysis reports, and smart to-do generation, helping users easily record and manage their daily lives.
 
-## 项目简介
+## Project Introduction
 
-**智绘时光** 通过AI技术解决以下问题：
-- 写日记难：只需一句话，AI即可生成完整、详细的日记内容
-- 工作总结繁琐：自动分析日记，一键生成日报、周报、月报
-- 待办管理复杂：AI分析日记内容，自动提取和生成待办事项
-- 财务记录麻烦：自动识别日记中的收支信息，生成财务报告
+**TimeCanvas** solves the following problems through AI technology:
+- Difficulty in journaling: Generate complete, detailed diary content with just one sentence using AI
+- Tedious work summaries: Automatically analyze diaries and generate daily, weekly, and monthly reports with one click
+- Complex task management: AI analyzes diary content to automatically extract and generate to-do items
+- Hassle-free financial tracking: Automatically identify income and expenses from diary entries and generate financial reports
 
-## 技术栈
+## Tech Stack
 
-### 后端
-- **核心框架**：Spring Boot 3.1.5
-- **安全框架**：Spring Security + JWT
-- **数据访问**：Spring Data JPA + MyBatis-Plus
-- **数据库**：MySQL
-- **缓存**：Redis
-- **API文档**：Knife4j (基于OpenAPI 3)
-- **AI集成**：LangChain4j、DeepSeek、火山引擎
-- **工具库**：Lombok、Hutool
+### Backend
+- **Core Framework**: Spring Boot 3.1.5
+- **Security**: Spring Security + JWT
+- **Data Access**: Spring Data JPA + MyBatis-Plus
+- **Database**: MySQL
+- **Caching**: Redis
+- **API Documentation**: Knife4j (Based on OpenAPI 3)
+- **AI Integration**: LangChain4j, DeepSeek, Volcano Engine
+- **Utility Libraries**: Lombok, Hutool
 
-### 前端（计划中）
-- **核心框架**：Vue 3
-- **UI组件库**：Element Plus
-- **HTTP客户端**：Axios
-- **构建工具**：Vite
+### Frontend
+- **Core Framework**: Vue 3
+- **UI Component Library**: Element Plus
+- **HTTP Client**: Axios
+- **Build Tool**: Vite
 
 ## 项目结构
 
@@ -106,39 +106,39 @@ IPT_backend/
 3. 在弹出框中输入`Bearer your_token_here`格式的认证信息
 4. 确认后，后续请求会自动携带认证信息
 
-## 快速开始
+## Quick Start
 
-### 环境准备
+### Prerequisites
 
-1. 安装JDK 17+
-2. 安装MySQL 8.0+
-3. 安装Redis
-4. 克隆代码库
+1. Install JDK 17+
+2. Install MySQL 8.0+
+3. Install Redis
+4. Clone the repository
 
-### 数据库配置
+### Database Configuration
 
-1. 创建数据库：
+1. Create a new database:
 ```sql
-CREATE DATABASE ipt_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE timecanvas_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-2. 修改`application.yml`中的数据库配置：
+2. Update the database configuration in `application.yml`:
 ```yaml
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/ipt_db?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://localhost:3306/timecanvas_db?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
     username: your_username
     password: your_password
 ```
 
-### 启动项目
+### Running the Project
 
 ```bash
-cd IPT_backend
+cd TimeCanvas_backend
 mvn spring-boot:run
 ```
 
-启动成功后访问: http://localhost:8080/api/doc.html 查看API文档
+After successful startup, access the API documentation at: http://localhost:8080/api/doc.html
 
 ## AI配置说明
 
@@ -170,19 +170,19 @@ ai:
 - 创建用户相关API接口
 - 创建日记生成API接口
 
-## 贡献指南
+## Contributing
 
-欢迎贡献代码，请遵循以下步骤：
+We welcome contributions! Please follow these steps:
 
-1. Fork 仓库
-2. 创建特性分支 (`git checkout -b feature/amazing-feature`)
-3. 提交变更 (`git commit -m 'Add some amazing feature'`)
-4. 推送到分支 (`git push origin feature/amazing-feature`)
-5. 创建Pull Request
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Create a Pull Request
 
-## 许可证
+## License
 
-本项目采用 Apache 2.0 许可证
+This project is licensed under the Apache 2.0 License
 
 ## 后端接口对接指南
 
