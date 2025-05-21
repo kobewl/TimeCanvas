@@ -1,0 +1,42 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# 技术架构
+
+## 后端技术栈
+
+- Java 17+
+- Spring Boot: 应用框架
+- Spring Security: 认证与授权
+- Spring Data JPA/MyBatis: 数据访问
+- Maven: 构建工具
+- JUnit: 单元测试
+- MySQL: 关系型数据库
+- Redis: 缓存与会话管理
+- Swagger/OpenAPI: API文档
+
+## 前端技术栈
+
+- Vue3: 前端框架
+- Element Plus: UI组件库
+- Axios: HTTP客户端
+- Vite: 构建工具
+
+## AI集成技术
+
+- LangChain4j: Java大语言模型工具库
+- 火山引擎: AI能力提供
+- DeepSeek: AI模型集成
+- 其他潜在模型集成
+
+## 微服务与部署
+
+- Docker: 容器化
+- Nginx: 反向代理与负载均衡
+- Jenkins/GitHub Actions: CI/CD
+
+## 项目依赖管理
+
+依赖通过pom.xml管理，确保版本兼容性与安全性。

@@ -1,0 +1,59 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+
+langchain4j:
+  open-ai:
+    chat-model:
+      api-key: 9f154f8d-c06c-441c-912e-82ab7ddf99e9
+      model-name: doubao-1-5-lite-32k-250115
+      # 是否记录请求和响应日志
+      log-requests: true
+      log-responses: true
+      base-url: https://ark.cn-beijing.volces.com/api/v3
+
+# 日志配置为 debug 级别
+logging:
+  level:
+    root: info
+
+
+spring:
+  main:
+    allow-circular-references: true
+  datasource:
+    url: jdbc:mysql://14.103.196.157:3306/TimeCanvasDB?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
+    username: root
+    password: kobe200800
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/timeCanvas
+
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      logic-delete-field: isDelete
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+# JWT配置
+jwt:
+  secret: timeCanvasSecretKey123456789012345678901234567890
+  expiration: 86400000 # 24小时，单位：毫秒
+
+# Knife4j配置
+knife4j:
+  enable: true
+  setting:
+    language: zh-CN
+    swagger-model-name: 实体类列表
+    enable-footer: false
+    enable-footer-custom: true
+    footer-custom-content: TimeCanvas API

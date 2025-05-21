@@ -1,0 +1,49 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# 开发指南
+
+## 代码风格
+
+- 遵循Google Java代码规范
+- 类名使用大驼峰命名法（如 `DiaryService`）
+- 方法和变量使用小驼峰命名法（如 `generateDiary`）
+- 常量使用全大写下划线分隔（如 `MAX_DIARY_LENGTH`）
+- 后端代码文件夹命名规范：`IPT_backend`
+
+## 包结构
+
+- `com.ipt.backend.common`: 通用组件和工具类
+- `com.ipt.backend.config`: 配置类
+- `com.ipt.backend.controller`: 控制器
+- `com.ipt.backend.service`: 服务层
+- `com.ipt.backend.dao`: 数据访问层
+- `com.ipt.backend.model`: 数据模型
+- `com.ipt.backend.utils`: 工具类
+- `com.ipt.backend.ai`: AI相关处理类
+
+## 开发流程
+
+1. 从主分支创建功能分支进行开发
+2. 提交前运行单元测试
+3. 代码审核后合并到主分支
+4. 定期集成和部署
+
+## 需求优先级管理
+
+| 优先级 | 描述 |
+| --- | --- |
+| P0 | 最高优先级，核心功能 |
+| P1 | 高优先级，基础功能 |
+| P2 | 中等优先级，重要但非核心功能 |
+| P3 | 低优先级，可延后开发的功能 |
+
+## REST API规范
+
+- 使用RESTful设计原则
+- URL使用名词而非动词，如 `/api/diaries` 而非 `/api/getDiaries`
+- 使用HTTP方法表示操作（GET、POST、PUT、DELETE）
+- 返回适当的HTTP状态码
+- API版本控制：`/api/v1/resource`

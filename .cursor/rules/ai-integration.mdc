@@ -1,0 +1,116 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# AI集成
+
+## 概述
+
+本项目深度集成主流AI大模型，通过LangChain4j框架在Java环境中集成各种模型能力，包括DeepSeek和火山引擎等。
+
+## 集成架构
+
+```
+用户请求 → 控制器 → 服务层 → AI服务 → 大模型API → 结果处理 → 返回
+```
+
+## 主要功能
+
+### 一句话生成日记
+
+通过简短提示词生成完整日记内容，同时根据模板进行格式化。
+
+```java
+// 示例代码
+public DiaryDTO generateDiary(String prompt, Long templateId) {
+    // 获取模板
+    TemplateEntity template = templateService.getById(templateId);
+    
+    // 构建提示词
+    String enhancedPrompt = buildPrompt(prompt, template.getContent());
+    
+    // 调用AI
+    String aiResponse = aiService.generateContent(enhancedPrompt);
+    
+    // 解析结果
+    return parseDiaryFromAiResponse(aiResponse);
+}
+```
+
+### 自动分析生成报告
+
+分析用户多天日记内容，提取关键信息，自动生成日报、周报、月报。
+
+```java
+// 示例代码
+public ReportDTO generateReport(Integer type, LocalDate startDate, LocalDate endDate) {
+    // 获取日期范围内的日记
+    List<DiaryEntity> diaries = diaryService.getByDateRange(startDate, endDate);
+    
+    // 提取日记内容
+    String diaryContents = extractDiaryContents(diaries);
+    
+    // 根据报告类型构建提示词
+    String prompt = buildReportPrompt(type, diaryContents);
+    
+    // 调用AI
+    String aiResponse = aiService.generateContent(prompt);
+    
+    // 解析结果
+    return new ReportDTO(null, aiResponse, type);
+}
+```
+
+### 智能待办生成
+
+从日记内容中自动提取出潜在的待办事项，便于用户跟踪。
+
+### 开支自动识别
+
+从日记内容中识别消费和收入信息，自动记录到财务系统。
+
+## 使用的模型
+
+- **DeepSeek**: 用于核心的内容生成和理解任务
+- **火山引擎**: 提供通用AI能力支持
+
+## 提示词工程
+
+为了获得最佳的生成结果，项目中会对不同场景设计专门的提示词模板：
+
+```
+// 日记生成提示词模板
+你是一位专业的日记撰写助手，请根据以下简短描述，生成一篇详细的日记：
+
+描述：{用户输入的简短描述}
+
+请按照以下模板格式生成：
+{模板内容}
+
+生成的日记应当包含情感描写、环境描述和个人感悟，语言自然流畅。
+```
+
+## LangChain4j集成
+
+项目使用LangChain4j作为主要的LLM集成框架，便于模型的调用和管理：
+
+```java
+// LangChain4j集成示例
+@Service
+public class AiServiceImpl implements AiService {
+
+    @Override
+    public String generateContent(String prompt) {
+        // 创建语言模型
+        ChatLanguageModel model = OpenAiChatModel.builder()
+            .apiKey(apiKey)
+            .modelName("gpt-3.5-turbo")
+            .temperature(0.7)
+            .build();
+            
+        // 生成内容
+        return model.generate(prompt);
+    }
+}
+```
