@@ -28,15 +28,15 @@ TimeCanvas is an intelligent diary management system powered by AI. This project
 - **HTTP Client**: Axios
 - **Build Tool**: Vite
 
-## 项目结构
+## Project Structure
 
 ```
-IPT_backend/
+TimeCanvas/
 ├── src/
 │   ├── main/
 │   │   ├── java/
 │   │   │   └── com/
-│   │   │       └── ipt/
+│   │   │       └── timecanvas/
 │   │   │           └── backend/
 │   │   │               ├── ai/          # AI相关处理
 │   │   │               ├── common/      # 通用组件
