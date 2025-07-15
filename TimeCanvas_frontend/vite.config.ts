@@ -10,6 +10,19 @@ export default defineConfig({
     vue(),
     vueDevTools(),
   ],
+  server: {
+    proxy: {
+      '/diary': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+      },
+      '/user': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+      },
+      // 可根据需要添加更多后端接口代理
+    }
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))

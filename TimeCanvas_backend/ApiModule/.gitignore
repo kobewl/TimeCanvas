@@ -1,0 +1,4 @@
+
+# 忽略本地配置和环境变量示例文件
+src/main/resources/application-local.yml
+src/main/resources/.env

@@ -56,4 +56,5 @@ public class GlobalExceptionHandler {
         log.error("Exception: " + e.getMessage(), e);
         return ResultUtils.error(ErrorCode.SYSTEM_ERROR.getCode(), "系统内部异常");
     }
-} 
+}
+

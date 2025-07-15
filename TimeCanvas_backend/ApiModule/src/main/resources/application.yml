@@ -3,12 +3,11 @@ server:
   servlet:
     context-path: /
 
-
 langchain4j:
   open-ai:
     chat-model:
-      api-key: 9f154f8d-c06c-441c-912e-82ab7ddf99e9
-      model-name: doubao-1-5-lite-32k-250115
+      api-key: ${OPENAI_API_KEY}
+      model-name: ${OPENAI_MODEL_NAME}
       # 是否记录请求和响应日志
       log-requests: true
       log-responses: true
@@ -24,13 +23,15 @@ spring:
   main:
     allow-circular-references: true
   datasource:
-    url: jdbc:mysql://14.103.196.157:3306/TimeCanvasDB?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
-    username: root
-    password: kobe200800
+    url: ${MYSQL_URL}
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
   data:
     mongodb:
       uri: mongodb://localhost:27017/timeCanvas
+  profiles:
+    active: local
 
 
 mybatis-plus:

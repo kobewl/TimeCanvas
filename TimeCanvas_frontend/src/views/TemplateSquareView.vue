@@ -1,229 +1,80 @@
 <template>
-  <div class="template-square-container">
-    <PageHeader
-      title="模板广场"
-      description="在这里发现并使用精美的日记模板，让你的记录更加轻松高效。"
-      icon="Document"
-    />
-
-    <div v-if="loading" class="loading-state">
-      <el-skeleton :rows="6" animated />
+  <div class="template-square-page">
+    <div class="template-header">
+      <h1>模板广场</h1>
+      <p class="desc">挑选你喜欢的日记模板，让AI帮你写出更有风格的日记。</p>
     </div>
-    
-    <div v-else-if="templates.length === 0" class="empty-section">
-      <EmptyState
-        description="暂无可用模板"
-        actionText="刷新"
-        actionIcon="Refresh"
-        @action="fetchTemplates"
-      />
-    </div>
-    
-    <div v-else>
-      <el-tabs type="card" class="template-tabs">
-        <el-tab-pane label="全部模板">
-          <el-row :gutter="20">
-            <el-col 
-              v-for="template in templates"
-              :key="template.id"
-              :xs="24" :sm="12" :md="8" :lg="6"
-            >
-              <ContentCard
-                :title="template.name"
-                icon="Document"
-                tag="日记模版"
-                tagType="info"
-                hoverEffect
-                class="template-card"
-              >
-                <div class="template-content-preview">
-                  <p>{{ template.content.substring(0, 150) }}{{ template.content.length > 150 ? '...' : '' }}</p>
-                </div>
-                
-                <template #footer>
-                  <el-button type="primary" @click="useTemplate(template)" class="use-template-btn">
-                    <el-icon><Edit /></el-icon> 使用模板
-                  </el-button>
-                  <el-button type="info" plain @click="previewTemplate(template)">
-                    <el-icon><View /></el-icon> 预览
-                  </el-button>
-                </template>
-              </ContentCard>
-            </el-col>
-          </el-row>
-        </el-tab-pane>
-      </el-tabs>
-    </div>
-    
-    <!-- 模板预览对话框 -->
-    <el-dialog
-      v-model="previewDialogVisible"
-      :title="selectedTemplate?.name || '模板预览'"
-      width="60%"
-      destroy-on-close
-    >
-      <div class="template-preview-content">
-        <div class="preview-section">
-          <h3>模板内容</h3>
-          <div class="content-box">
-            <p v-for="(line, index) in templateContentLines" :key="index">
-              {{ line }}
-            </p>
+    <el-row :gutter="24">
+      <el-col :xs="24" :sm="12" :md="8" v-for="item in templates" :key="item.id">
+        <el-card class="template-card" shadow="hover">
+          <div class="template-title">{{ item.type || '通用模板' }}</div>
+          <div class="template-content">{{ item.content }}</div>
+          <div class="template-tags">
+            <el-tag v-for="(tag, idx) in (item.tags ? item.tags.split(',') : [])" :key="idx" type="info" effect="plain">{{ tag }}</el-tag>
           </div>
-        </div>
-      </div>
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="previewDialogVisible = false">关闭</el-button>
-          <el-button type="primary" @click="useSelectedTemplate">
-            使用此模板
-          </el-button>
-        </span>
-      </template>
-    </el-dialog>
+        </el-card>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import * as API from '@/api/index.ts';
-import type { DiaryTemplate } from '@/api/index.ts';
-import { ElMessage } from 'element-plus';
-import { Edit, View, Document, Refresh } from '@element-plus/icons-vue';
-import PageHeader from '@/components/PageHeader.vue';
-import ContentCard from '@/components/ContentCard.vue';
-import EmptyState from '@/components/EmptyState.vue';
+import { ref, onMounted } from 'vue';
+// TODO: 后续可从后端获取模板列表
+const templates = ref([
+  { id: 1, type: '简洁', content: '适合日常简要记录，突出重点。', tags: '日常,简洁' },
+  { id: 2, type: '情感', content: '适合表达心情、情感和感悟。', tags: '情感,心情' },
+  { id: 3, type: '详细', content: '适合详细记录一天的每个细节。', tags: '详细,回顾' },
+]);
 
-const router = useRouter();
-const templates = ref<DiaryTemplate[]>([]);
-const loading = ref(true);
-
-// 模板预览相关
-const previewDialogVisible = ref(false);
-const selectedTemplate = ref<DiaryTemplate | null>(null);
-
-// 计算属性：模板内容分行
-const templateContentLines = computed(() => {
-  if (!selectedTemplate.value) return [];
-  return selectedTemplate.value.content.split('\n').filter(line => line.trim() !== '');
-});
-
-// 获取模板列表
-const fetchTemplates = async () => {
-  try {
-    loading.value = true;
-    console.log('正在获取模板列表...');
-    const result = await API.getTemplates();
-    console.log('获取到模板列表:', result);
-    templates.value = result;
-  } catch (error) {
-    console.error('获取模板失败:', error);
-    ElMessage.error('获取模板失败，请稍后再试');
-  } finally {
-    loading.value = false;
-  }
-};
-
-// 使用模板创建日记
-const useTemplate = (template: DiaryTemplate) => {
-  // 将模板内容保存到sessionStorage，然后在日记页面创建新日记时读取
-  sessionStorage.setItem('draftDiary', JSON.stringify({
-    title: `使用模板：${template.name}`,
-    content: template.content
-  }));
-  
-  ElMessage.success('已选择模板，即将跳转到日记页面');
-  
-  // 跳转到日记页面，并传递参数指示创建新日记
-  router.push({ path: '/diary', query: { createFromDraft: 'true' } });
-};
-
-// 预览模板
-const previewTemplate = (template: DiaryTemplate) => {
-  selectedTemplate.value = template;
-  previewDialogVisible.value = true;
-};
-
-// 使用当前选中的模板
-const useSelectedTemplate = () => {
-  if (selectedTemplate.value) {
-    useTemplate(selectedTemplate.value);
-    previewDialogVisible.value = false;
-  }
-};
-
-// 初始化时获取模板
 onMounted(() => {
-  fetchTemplates();
+  // 后续可请求后端接口获取模板数据
 });
 </script>
 
 <style scoped>
-.template-square-container {
-  max-width: 1280px;
-  width: 100%;
+.template-square-page {
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 32px 0 40px 0;
 }
-
-.template-tabs {
-  margin-top: 20px;
-}
-
-.template-card {
-  height: 100%;
-  margin-bottom: 20px;
-}
-
-.template-content-preview {
-  color: var(--el-text-color-secondary);
-  line-height: 1.6;
-  margin-bottom: 15px;
-  min-height: 80px;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.use-template-btn {
-  margin-right: 10px;
-}
-
-.loading-state {
+.template-header {
   text-align: center;
-  padding: 40px 0;
+  margin-bottom: 32px;
 }
-
-.empty-section {
-  margin: 40px 0;
+.template-header h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #409eff;
+  margin-bottom: 8px;
 }
-
-/* 模板预览对话框样式 */
-.template-preview-content {
-  max-height: 60vh;
-  overflow-y: auto;
+.desc {
+  color: #888;
+  font-size: 1.1rem;
 }
-
-.preview-section {
-  margin-bottom: 20px;
+.template-card {
+  border-radius: 16px;
+  box-shadow: 0 4px 18px rgba(64,158,255,0.08);
+  border: none;
+  margin-bottom: 24px;
+  min-height: 140px;
+  background: linear-gradient(135deg, #fafdff 60%, #eaf3ff 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
-
-.preview-section h3 {
-  font-size: 16px;
-  color: var(--el-text-color-primary);
-  margin-bottom: 10px;
+.template-title {
+  font-size: 1.1rem;
   font-weight: 600;
+  color: #409eff;
+  margin-bottom: 8px;
 }
-
-.content-box {
-  background-color: var(--el-fill-color-light);
-  border-radius: 4px;
-  padding: 16px;
-  min-height: 200px;
-  white-space: pre-line;
-  color: var(--el-text-color-regular);
-  line-height: 1.8;
+.template-content {
+  font-size: 15px;
+  color: #333;
+  margin-bottom: 10px;
+}
+.template-tags {
+  margin-top: 6px;
 }
 </style> 
