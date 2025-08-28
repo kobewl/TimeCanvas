@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.time.canvas.mapper.KnowledgeEntryMapper">
+
+    <!-- 知识条目结果映射 -->
+    <resultMap id="KnowledgeEntryResultMap" type="com.time.canvas.domain.KnowledgeEntry">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="content" property="content" jdbcType="LONGVARCHAR"/>
+        <result column="summary" property="summary" jdbcType="LONGVARCHAR"/>
+        <result column="category_id" property="categoryId" jdbcType="BIGINT"/>
+        <result column="user_id" property="userId" jdbcType="BIGINT"/>
+        <result column="tags" property="tags" jdbcType="VARCHAR"/>
+        <result column="view_count" property="viewCount" jdbcType="INTEGER"/>
+        <result column="embedding_vector" property="embeddingVector" jdbcType="LONGVARCHAR"/>
+        <result column="source_type" property="sourceType" jdbcType="VARCHAR"/>
+        <result column="source_id" property="sourceId" jdbcType="BIGINT"/>
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP"/>
+        <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <!-- 分页查询知识条目 -->
+    <select id="selectKnowledgeEntryPage" resultMap="KnowledgeEntryResultMap">
+        SELECT ke.*
+        FROM knowledge_entry ke
+        WHERE ke.is_deleted = 0
+        <if test="query.userId != null">
+            AND ke.user_id = #{query.userId}
+        </if>
+        <if test="query.keyword != null and query.keyword != ''">
+            AND (ke.title LIKE CONCAT('%', #{query.keyword}, '%') 
+                 OR ke.content LIKE CONCAT('%', #{query.keyword}, '%')
+                 OR ke.tags LIKE CONCAT('%', #{query.keyword}, '%'))
+        </if>
+        <if test="query.categoryId != null">
+            AND ke.category_id = #{query.categoryId}
+        </if>
+        <if test="query.sourceType != null and query.sourceType != ''">
+            AND ke.source_type = #{query.sourceType}
+        </if>
+        <if test="query.tags != null and query.tags.size() > 0">
+            AND (
+                <foreach collection="query.tags" item="tag" separator=" OR ">
+                    ke.tags LIKE CONCAT('%', #{tag}, '%')
+                </foreach>
+            )
+        </if>
+        ORDER BY ke.updated_time DESC, ke.created_time DESC
+    </select>
+
+    <!-- 根据标签查询知识条目 -->
+    <select id="selectByTags" resultMap="KnowledgeEntryResultMap">
+        SELECT ke.*
+        FROM knowledge_entry ke
+        WHERE ke.is_deleted = 0
+        AND ke.user_id = #{userId}
+        <if test="tags != null and tags.size() > 0">
+            AND (
+                <foreach collection="tags" item="tag" separator=" OR ">
+                    ke.tags LIKE CONCAT('%', #{tag}, '%')
+                </foreach>
+            )
+        </if>
+        ORDER BY ke.view_count DESC, ke.updated_time DESC
+        LIMIT 20
+    </select>
+
+    <!-- 全文搜索知识条目 -->
+    <select id="searchKnowledgeEntries" resultMap="KnowledgeEntryResultMap">
+        SELECT ke.*,
+               MATCH(ke.title, ke.content) AGAINST(#{keyword} IN NATURAL LANGUAGE MODE) as relevance_score
+        FROM knowledge_entry ke
+        WHERE ke.is_deleted = 0
+        AND ke.user_id = #{userId}
+        AND (
+            MATCH(ke.title, ke.content) AGAINST(#{keyword} IN NATURAL LANGUAGE MODE) > 0
+            OR ke.title LIKE CONCAT('%', #{keyword}, '%')
+            OR ke.content LIKE CONCAT('%', #{keyword}, '%')
+            OR ke.tags LIKE CONCAT('%', #{keyword}, '%')
+        )
+        ORDER BY relevance_score DESC, ke.view_count DESC, ke.updated_time DESC
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <!-- 获取热门标签 -->
+    <select id="getPopularTags" resultType="String">
+        SELECT 
+            TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(all_tags.tag, ',', numbers.n), ',', -1)) as tag
+        FROM (
+            SELECT 1 n UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5
+            UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10
+        ) numbers
+        INNER JOIN (
+            SELECT tags as tag
+            FROM knowledge_entry
+            WHERE is_deleted = 0 
+            AND user_id = #{userId}
+            AND tags IS NOT NULL 
+            AND tags != ''
+        ) all_tags
+        ON CHAR_LENGTH(all_tags.tag) - CHAR_LENGTH(REPLACE(all_tags.tag, ',', '')) >= numbers.n - 1
+        WHERE TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(all_tags.tag, ',', numbers.n), ',', -1)) != ''
+        GROUP BY tag
+        ORDER BY COUNT(*) DESC
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <!-- 更新查看次数 -->
+    <update id="incrementViewCount">
+        UPDATE knowledge_entry 
+        SET view_count = COALESCE(view_count, 0) + 1,
+            updated_time = NOW()
+        WHERE id = #{id} AND is_deleted = 0
+    </update>
+
+    <!-- 获取用户统计信息 -->
+    <select id="getUserStatistics" resultMap="KnowledgeEntryResultMap">
+        SELECT 
+            COUNT(*) as id,
+            SUM(view_count) as view_count,
+            COUNT(DISTINCT category_id) as category_id
+        FROM knowledge_entry
+        WHERE is_deleted = 0 AND user_id = #{userId}
+    </select>
+
+</mapper>

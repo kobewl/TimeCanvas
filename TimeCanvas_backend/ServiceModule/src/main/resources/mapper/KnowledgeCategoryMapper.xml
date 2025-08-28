@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.time.canvas.mapper.KnowledgeCategoryMapper">
+
+    <!-- 知识分类结果映射 -->
+    <resultMap id="KnowledgeCategoryResultMap" type="com.time.canvas.domain.KnowledgeCategory">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="LONGVARCHAR"/>
+        <result column="parent_id" property="parentId" jdbcType="BIGINT"/>
+        <result column="user_id" property="userId" jdbcType="BIGINT"/>
+        <result column="sort_order" property="sortOrder" jdbcType="INTEGER"/>
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <!-- 查询用户的所有分类 -->
+    <select id="selectByUserId" resultMap="KnowledgeCategoryResultMap">
+        SELECT kc.*
+        FROM knowledge_category kc
+        WHERE kc.is_deleted = 0
+        AND kc.user_id = #{userId}
+        ORDER BY kc.sort_order ASC, kc.created_time ASC
+    </select>
+
+    <!-- 查询子分类 -->
+    <select id="selectByParentId" resultMap="KnowledgeCategoryResultMap">
+        SELECT kc.*
+        FROM knowledge_category kc
+        WHERE kc.is_deleted = 0
+        AND kc.user_id = #{userId}
+        <if test="parentId != null">
+            AND kc.parent_id = #{parentId}
+        </if>
+        <if test="parentId == null">
+            AND kc.parent_id IS NULL
+        </if>
+        ORDER BY kc.sort_order ASC, kc.created_time ASC
+    </select>
+
+    <!-- 获取分类下的知识条目数量 -->
+    <select id="countEntriesByCategoryId" resultType="Integer">
+        SELECT COUNT(*)
+        FROM knowledge_entry ke
+        WHERE ke.is_deleted = 0
+        AND ke.category_id = #{categoryId}
+    </select>
+
+    <!-- 检查分类名称是否存在 -->
+    <select id="checkNameExists" resultType="Integer">
+        SELECT COUNT(*)
+        FROM knowledge_category kc
+        WHERE kc.is_deleted = 0
+        AND kc.user_id = #{userId}
+        AND kc.name = #{name}
+        <if test="parentId != null">
+            AND kc.parent_id = #{parentId}
+        </if>
+        <if test="parentId == null">
+            AND kc.parent_id IS NULL
+        </if>
+        <if test="excludeId != null">
+            AND kc.id != #{excludeId}
+        </if>
+    </select>
+
+</mapper>

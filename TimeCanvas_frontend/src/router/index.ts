@@ -37,9 +37,14 @@ const routes = [
     component: () => import('../views/TodosView.vue'),
   },
   {
-    path: '/reports',
-    name: 'Reports',
-    component: () => import('../views/ReportsView.vue'),
+    path: '/knowledge',
+    name: 'Knowledge',
+    component: () => import('../views/KnowledgeDocumentView.vue'),
+  },
+  {
+    path: '/knowledge-management',
+    name: 'KnowledgeManagement', 
+    component: () => import('../views/KnowledgeManagementView.vue'),
   },
   {
     path: '/profile',

@@ -1,140 +1,167 @@
-import axios from './axios'
+import request from './axios'
 
-// 知识库相关API接口
+// 知识分类相关API
+export const knowledgeCategoryApi = {
+  // 创建知识分类
+  createCategory: (data: any) => {
+    return request({
+      url: '/api/knowledge/category/create',
+      method: 'post',
+      data
+    })
+  },
 
-/**
- * 创建知识条目
- */
-export function createKnowledgeEntry(data: {
-  title: string
-  content: string
-  categoryId?: number
-  tags?: string[]
-  sourceType?: string
-  sourceId?: number
-}) {
-  return axios.post('/api/knowledge/create', data)
+  // 更新知识分类
+  updateCategory: (data: any) => {
+    return request({
+      url: '/api/knowledge/category/update',
+      method: 'post',
+      data
+    })
+  },
+
+  // 删除知识分类
+  deleteCategory: (id: number) => {
+    return request({
+      url: `/api/knowledge/category/delete/${id}`,
+      method: 'post'
+    })
+  },
+
+  // 获取分类详情
+  getCategory: (id: number) => {
+    return request({
+      url: `/api/knowledge/category/get/${id}`,
+      method: 'get'
+    })
+  },
+
+  // 获取分类树
+  getCategoryTree: () => {
+    return request({
+      url: '/api/knowledge/category/tree',
+      method: 'get'
+    })
+  },
+
+  // 获取子分类ID
+  getChildCategoryIds: (id: number) => {
+    return request({
+      url: `/api/knowledge/category/children/${id}`,
+      method: 'get'
+    })
+  }
 }
 
-/**
- * 更新知识条目
- */
-export function updateKnowledgeEntry(id: number, data: {
-  title: string
-  content: string
-  categoryId?: number
-  tags?: string[]
-  sourceType?: string
-  sourceId?: number
-}) {
-  return axios.post(`/api/knowledge/update/${id}`, data)
-}
+// 知识条目相关API
+export const knowledgeApi = {
+  // 创建知识条目
+  create: (data: any) => {
+    return request({
+      url: '/api/knowledge/create',
+      method: 'post',
+      data
+    })
+  },
 
-/**
- * 删除知识条目
- */
-export function deleteKnowledgeEntry(id: number) {
-  return axios.post(`/api/knowledge/delete/${id}`)
-}
+  // 更新知识条目
+  update: (data: any) => {
+    return request({
+      url: '/api/knowledge/update',
+      method: 'post',
+      data
+    })
+  },
 
-/**
- * 获取知识条目详情
- */
-export function getKnowledgeEntry(id: number) {
-  return axios.get(`/api/knowledge/get/${id}`)
-}
+  // 删除知识条目
+  delete: (id: number) => {
+    return request({
+      url: `/api/knowledge/delete/${id}`,
+      method: 'post'
+    })
+  },
 
-/**
- * 分页查询知识条目
- */
-export function listKnowledgeEntries(data: {
-  current?: number
-  pageSize?: number
-  keyword?: string
-  categoryId?: number
-  tags?: string[]
-  sourceType?: string
-  enableSemanticSearch?: boolean
-  semanticQuery?: string
-}) {
-  return axios.post('/api/knowledge/list', data)
-}
+  // 获取知识条目详情
+  get: (id: number) => {
+    return request({
+      url: `/api/knowledge/get/${id}`,
+      method: 'get'
+    })
+  },
 
-/**
- * 搜索知识条目
- */
-export function searchKnowledgeEntries(data: {
-  keyword?: string
-  categoryId?: number
-  tags?: string[]
-  enableSemanticSearch?: boolean
-  semanticQuery?: string
-}) {
-  return axios.post('/api/knowledge/search', data)
-}
+  // 分页查询知识条目
+  page: (params: any) => {
+    return request({
+      url: '/api/knowledge/page',
+      method: 'get',
+      params
+    })
+  },
 
-/**
- * 获取相关知识条目
- */
-export function getRelatedEntries(id: number, limit: number = 5) {
-  return axios.get(`/api/knowledge/related/${id}?limit=${limit}`)
-}
+  // 搜索知识条目
+  search: (data: any) => {
+    return request({
+      url: '/api/knowledge/search',
+      method: 'post',
+      data
+    })
+  },
 
-/**
- * 从日记提取知识
- */
-export function extractFromDiary(diaryId: number) {
-  return axios.post(`/api/knowledge/extract-from-diary/${diaryId}`)
-}
+  // 智能问答
+  ask: (data: any) => {
+    return request({
+      url: '/api/knowledge/ask',
+      method: 'post',
+      data
+    })
+  },
 
-/**
- * 智能问答
- */
-export function intelligentQA(question: string) {
-  return axios.post('/api/knowledge/qa', null, {
-    params: { question }
-  })
-}
+  // 生成摘要
+  generateSummary: (data: any) => {
+    return request({
+      url: '/api/knowledge/generate-summary',
+      method: 'post',
+      data
+    })
+  },
 
-/**
- * 获取热门标签
- */
-export function getPopularTags(limit: number = 20) {
-  return axios.get(`/api/knowledge/tags/popular?limit=${limit}`)
-}
+  // 提取标签
+  extractTags: (data: any) => {
+    return request({
+      url: '/api/knowledge/extract-tags',
+      method: 'post',
+      data
+    })
+  },
 
-/**
- * 生成摘要
- */
-export function generateSummary(content: string) {
-  return axios.post('/api/knowledge/generate-summary', null, {
-    params: { content }
-  })
-}
+  // 导入文档
+  importDocument: (data: any) => {
+    return request({
+      url: '/api/knowledge/import',
+      method: 'post',
+      data,
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+  },
 
-/**
- * 批量导入知识条目
- */
-export function batchImport(entries: Array<{
-  title: string
-  content: string
-  categoryId?: number
-  tags?: string[]
-  sourceType?: string
-  sourceId?: number
-}>) {
-  return axios.post('/api/knowledge/batch-import', entries)
-}
+  // 导出文档
+  export: (ids: number[]) => {
+    return request({
+      url: '/api/knowledge/export',
+      method: 'post',
+      data: { ids },
+      responseType: 'blob'
+    })
+  },
 
-/**
- * 文件上传导入
- */
-export function uploadFile(file: File) {
-  const formData = new FormData()
-  formData.append('file', file)
-  return axios.post('/api/knowledge/upload', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
-  })
+  // 批量操作
+  batchOperation: (data: any) => {
+    return request({
+      url: '/api/knowledge/batch',
+      method: 'post',
+      data
+    })
+  }
 }
