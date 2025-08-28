@@ -2,7 +2,7 @@ package com.time.canvas.dto.Template;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 
 /**

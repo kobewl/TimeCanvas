@@ -2,6 +2,8 @@ package com.time.canvas.dao;
 
 import com.time.canvas.domain.AiConfig;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -42,5 +44,10 @@ public class AiConfigDao {
             log.error("Error fetching AiConfig from database for model {}: {}", modelName, e.getMessage(), e);
         }
         return null;
+    }
+
+    public AiConfig getKnowledgeAiConfig() {
+        // 获取知识库专用的AI配置，这里使用默认配置
+        return getConfig("deepseek-chat");
     }
 } 

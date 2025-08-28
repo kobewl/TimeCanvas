@@ -23,7 +23,7 @@ public class DiaryAgentConfig {
 
     @Bean
     public OpenAiChatModel diaryChatModel() {
-        AiConfig config = configDao.getConfig("doubao-1-5-lite-32k-250115");
+        AiConfig config = configDao.getConfig("deepseek-chat");
         if (config == null) {
             throw new RuntimeException("无法找到AI模型配置");
         }

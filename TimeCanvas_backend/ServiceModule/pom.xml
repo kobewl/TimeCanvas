@@ -18,6 +18,12 @@
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
         
+        <!-- Validation -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+        
         <!-- MyBatis Plus -->
         <dependency>
             <groupId>com.baomidou</groupId>

@@ -62,12 +62,45 @@ public class DiaryServiceImpl extends ServiceImpl<DiaryMapper, Diary>
             String promptContent = prompt.getContent();
             Template diaryTemplate = templateConfigDao.getDiaryTemplate(diary.getTemplateId());
             String templateContent = diaryTemplate.getContent();
-            String diaryChat = diaryAgent.chat("系统提示词：" + promptContent + "用户描述：" + diary.getMessage() + "要生成的日记模版是：" + templateContent + "今天的日期是：" +  new java.util.Date());
+            
+            // 替换模板中的变量
+            templateContent = replaceTemplateVariables(templateContent, diary);
+            
+            String diaryChat = diaryAgent.chat("系统提示词：" + promptContent + "用户描述：" + diary.getMessage() + "要生成的日记模版是：" + templateContent);
             return diaryChat;
         }catch (Exception e){
-            new BusinessException(ErrorCode.SYSTEM_ERROR, "生成日记失败");
+            log.error("生成日记失败: {}", e.getMessage(), e);
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "生成日记失败");
         }
-        return null;
+    }
+    
+    /**
+     * 替换模板中的变量
+     */
+    private String replaceTemplateVariables(String templateContent, ChatForm diary) {
+        if (templateContent == null) {
+            return "";
+        }
+        
+        // 获取当前日期
+        java.time.LocalDate now = java.time.LocalDate.now();
+        java.time.format.DateTimeFormatter dateFormatter = java.time.format.DateTimeFormatter.ofPattern("yyyy年MM月dd日");
+        String currentDate = now.format(dateFormatter);
+        
+        // 替换日期变量
+        templateContent = templateContent.replace("{{date}}", currentDate);
+        
+        // 替换其他常见变量（如果存在）
+        templateContent = templateContent.replace("{{weather}}", "晴朗"); // 默认天气
+        templateContent = templateContent.replace("{{mood}}", "平静"); // 默认心情
+        templateContent = templateContent.replace("{{keywords}}", "日常生活"); // 默认关键词
+        
+        // 替换内容变量为用户输入
+        if (diary.getMessage() != null) {
+            templateContent = templateContent.replace("{{content}}", diary.getMessage());
+        }
+        
+        return templateContent;
     }
 
     @Override

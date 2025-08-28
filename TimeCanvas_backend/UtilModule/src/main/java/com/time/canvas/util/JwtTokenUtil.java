@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -99,6 +100,29 @@ public class JwtTokenUtil {
             return authHeader.substring(7).trim();
         }
         throw new RuntimeException("Invalid authorization header");
+    }
+
+    // 从token中获取用户ID
+    public Long getUserIdFromToken(String token) {
+        Claims claims = getAllClaimsFromToken(token);
+        return claims.get("userId", Long.class);
+    }
+
+    // 从请求中获取用户ID
+    public Long getUserIdFromRequest(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null) {
+            throw new RuntimeException("Missing authorization header");
+        }
+        String token = extractToken(authHeader);
+        return getUserIdFromToken(token);
+    }
+
+    // 生成包含用户ID的token
+    public String generateTokenWithUserId(String username, Long userId) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", userId);
+        return doGenerateToken(claims, username);
     }
 
 } 

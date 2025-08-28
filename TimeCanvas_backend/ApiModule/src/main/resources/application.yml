@@ -6,7 +6,7 @@ server:
 langchain4j:
   open-ai:
     chat-model:
-      api-key: ${OPENAI_API_KEY}
+      api-key: sk-3e0040049b3d4f4db6a68408b851372a
       model-name: ${OPENAI_MODEL_NAME}
       # 是否记录请求和响应日志
       log-requests: true
@@ -23,9 +23,9 @@ spring:
   main:
     allow-circular-references: true
   datasource:
-    url: ${MYSQL_URL}
-    username: ${MYSQL_USERNAME}
-    password: ${MYSQL_PASSWORD}
+    url: jdbc:mysql://localhost:3306/timecanvas_db?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false
+    username: root
+    password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
   data:
     mongodb:
